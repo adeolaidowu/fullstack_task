@@ -20,7 +20,7 @@ const RootQuery = new GraphQLObjectType({
             type: UserType,
             args: { id: { type: GraphQLID } },
             resolve(parent, args) {
-                return users.find(user => user.id === args.id)
+                return users.find(user => user.id == args.id)
             }
         },
         // get all customers
@@ -35,7 +35,7 @@ const RootQuery = new GraphQLObjectType({
             type: CustomerType,
             args: { id: { type: GraphQLID } },
             resolve(parent, args) {
-                return customers.find(customer => customer.id === args.id)
+                return customers.find(customer => customer.id == args.id)
             }
         },
         // get all business
@@ -50,7 +50,7 @@ const RootQuery = new GraphQLObjectType({
             type: BusinessType,
             args: { id: { type: GraphQLID } },
             resolve(parent, args) {
-                return business.find(b => b.id === args.id)
+                return business.find(b => b.id == args.id)
             }
         }
     }
@@ -69,8 +69,15 @@ const Mutation = new GraphQLObjectType({
                 password: { type: GraphQLString },
             },
             resolve(parent, args) {
-                users.push({ id: users.length + 1, name: args.name, email: args.email, password: args.password })
-                return args
+                const lastUser = users[users.length - 1]
+                const newUser = {
+                    id: Number(lastUser.id) + 1,
+                    name: args.name,
+                    email: args.email,
+                    password: args.password
+                }
+                users.push(newUser)
+                return newUser
             }
         },
         // update a user
@@ -82,11 +89,11 @@ const Mutation = new GraphQLObjectType({
                 email: { type: new GraphQLNonNull(GraphQLString) },
             },
             resolve(parent, args) {
-                let updatedUser = users.find(user => user.id === args.id)
+                let updatedUser = users.find(user => user.id == args.id)
                 updatedUser.name = args.name == "" ? updatedUser.name : args.name;
                 updatedUser.email = args.email == "" ? updatedUser.email : args.email;
                 users.forEach((user, index) => {
-                    if (user.id === args.id) {
+                    if (user.id == args.id) {
                         users[index] = updatedUser
                         return
                     }
@@ -103,7 +110,7 @@ const Mutation = new GraphQLObjectType({
             resolve(parent, args) {
                 let userToDelete;
                 users.forEach((user, index) => {
-                    if (user.id === args.id) {
+                    if (user.id == args.id) {
                         userToDelete = user;
                         users.splice(index, 1)
                     }
@@ -121,8 +128,14 @@ const Mutation = new GraphQLObjectType({
                 sector: { type: GraphQLString },
             },
             resolve(parent, args) {
-                business.push({ id: business.length + 1, name: args.name, sector: args.sector })
-                return args
+                const lastBusiness = business[business.length - 1]
+                const newBusiness = {
+                    id: Number(lastBusiness.id) + 1,
+                    name: args.name,
+                    sector: args.sector
+                }
+                business.push(newBusiness)
+                return newBusiness
             }
         },
         // update a business
@@ -136,7 +149,7 @@ const Mutation = new GraphQLObjectType({
             resolve(parent, args) {
                 let updatedBusiness = business.find(b => b.id == args.id)
                 updatedBusiness.name = args.name == "" ? updatedBusiness.name : args.name;
-                updatedBusiness.email = args.email == "" ? updatedBusiness.email : args.email;
+                updatedBusiness.sector = args.sector == "" ? updatedBusiness.sector : args.sector;
                 business.forEach((b, index) => {
                     if (b.id == args.id) {
                         business[index] = updatedBusiness
@@ -155,7 +168,7 @@ const Mutation = new GraphQLObjectType({
             resolve(parent, args) {
                 let businessToDelete;
                 business.forEach((b, index) => {
-                    if (b.id === args.id) {
+                    if (b.id == args.id) {
                         businessToDelete = b;
                         business.splice(index, 1)
                     }
@@ -173,8 +186,14 @@ const Mutation = new GraphQLObjectType({
                 businessId: { type: GraphQLID },
             },
             resolve(parent, args) {
-                customers.push({ id: customers.length + 1, name: args.name, businessId: args.businessId })
-                return args
+                const lastCustomer = customers[customers.length - 1]
+                const newCustomer = {
+                    id: Number(lastCustomer.id) + 1,
+                    name: args.name,
+                    businessId: args.businessId
+                }
+                customers.push(newCustomer)
+                return newCustomer
             }
         },
         // update a customer
